@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUSP Hub</title>
+</head>
+
+<body>
+    <h1>GUSP Hub</h1>
+    <p>Enter a GUSP-based API URL</p>
+    <form action="/add-api" method="post">
+        <p>
+            <label for="url">API</label><br>
+            <input type="text" name="url" id="url" placeholder="https://example.com/api/"></p>
+        <p>
+            <label for="javascript">Custom Redirecting Behaviour</label><br>
+            <textarea name="javascript" id="javascript" placeholder="alert('Redirecting to: ' + data.originalUrl)" cols="50" ></textarea>
+            <sub>(Free XSS here!)</sub>
+        </p>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>

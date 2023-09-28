@@ -1,0 +1,15 @@
+from Crypto.Util.number import getPrime
+from Crypto.Util.number import bytes_to_long
+
+p = getPrime(512)
+q = getPrime(512)
+p = 10022553375108821529844618894580980313564030317175593625982973888482251563999104919286280198339303433694157595445572216996204077260973262830478062396697789
+q = 6835092558152675031658352759449990404300005409815328710075167485390024361483110844251065740164451242427516689598959304405121832607031768670420030801335797
+print(f"{p = }")
+print(f"{q = }")
+N = p * q
+e = 65537
+d = pow(e, -1, (p - 1) * (q - 1))
+# flag = b"FLAG{This is a fake flag.This is a fake flag.This is a fake flag.This is a fake flag.This is a fake flag.}"
+flag = b"flag{This is a fake flag.}"
+assert len(flag) * 8 < 1024

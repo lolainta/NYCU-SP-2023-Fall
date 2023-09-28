@@ -1,0 +1,11 @@
+version: '3.5'
+
+services:
+  app:
+    build: ./app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - FLAG=flag{fake_flag}

@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "puppeteer": "^21.1.1",
+    "uuid": "^9.0.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}

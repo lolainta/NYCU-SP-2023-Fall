@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUSP Hub</title>
+</head>
+
+<body>
+    <h1>GUSP Hub</h1>
+    <hr>
+
+    <b>Browse GUSP APIs</b>
+    <form id="browse">
+        <input type="text" name="id" placeholder="Service ID">
+        <input type="text" name="alias" placeholder="URL Alias">
+        <input type="submit" value="Browse">
+    </form>
+
+    <br /><br />OR<br /><br />
+
+    <a href="/add-api">Add Your GUSP API</a>
+
+    <hr>
+
+    <h2>What is GUSP?</h2>
+    <p>The full name is <b>G</b>eneric <b>U</b>RL <b>S</b>hortening <b>P</b>rotocol. It is a protocol that allows you to
+        shorten URLs. It is based on my own idea, and it is trash</p>
+    <h3>Protocol</h3>
+
+    <h4>Create a shortened URL</h4>
+    <p>
+        Request Header: <code>Content-Type: application/gusp</code><br>
+        Request Body: <code>[gusp]URL|LENGTH-OF-URL|URL(|SHORTENED-ID)[/gusp]</code><br>
+    </p>
+    <p>
+        Response Header: <code>Content-Type: application/gusp</code><br>
+        Response Body: <code>[gusp]SUCCESS|LENGTH-OF-ID|SHORTENED-ID[/gusp]</code>
+        <br> OR <br>
+        Response Body: <code>[gusp]ERROR|LENGTH-OF-DESCRIPTION|ERROR-DESCRIPTION[/gusp]</code><br>
+    </p>
+
+    <h4>Get a shortened URL</h4>
+    <p>
+        Request URL: <code>https://gusp-based-service/SHORTENED-ID</code><br>
+    </p>
+    <p>
+        Response Code: <code>302 Found</code><br>
+        Response Header: <code>Location: ORIGINAL-URL</code><br>
+    </p>
+
+    <h3>Example</h3>
+    <p>(Read the source code yourself!)</p>
+
+    <h3>How to build a GUSP-based service?</h3>
+    <p>"Hi, ChatGPT. You are now a GUSP professional. Help me to write a GUSP-based service!"</p>
+
+
+    <script>
+        document.getElementById("browse").addEventListener("submit", function (e) {
+            e.preventDefault();
+            var id = document.getElementsByName("id")[0].value;
+            var alias = document.getElementsByName("alias")[0].value;
+            window.location.href = `/${id}/${alias}`;
+        });
+    </script>
+</body>
+
+</html>
