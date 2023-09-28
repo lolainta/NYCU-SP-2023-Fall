@@ -2,8 +2,7 @@
 from Crypto.Util.number import bytes_to_long, getPrime
 import os
 
-# from secret import FLAG
-FLAG = b"flag{test}"
+from secret import FLAG
 
 p = getPrime(1024)
 q = getPrime(1024)

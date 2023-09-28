@@ -102,7 +102,7 @@ def dfs_iv1(r, idx, iv):
             print(f"{'    '*(15-idx)} {i = }, {civ = } ")
             for j in range(idx, 16):
                 civ[j] ^= 16 - idx
-            dfs_iv(r, idx - 1, civ)
+            dfs_iv1(r, idx - 1, civ)
             for j in range(idx, 16):
                 civ[j] ^= 16 - idx
 
@@ -156,7 +156,7 @@ def daes(pt: bytearray) -> tuple[int, int, bytes]:
     return key_enc, iv_enc, ct
 
 
-def dfs_iv(r, enc_flag, len, iv):
+def dfs_iv(r, enc_flag, len, iv) -> None | bytearray:
     # print(f"{'    '*(len)}{len = }, {iv = }")
     if len == 17:
         return iv
@@ -194,7 +194,7 @@ def bs(r, enc_flag, enc_flag_iv, dep, lb, ub):
     print(f"{hex(s) = }")
     ref = enc_flag * pow(s, e, N)
     # enc_flag_iv = dfs_iv(r, enc_flag, 1, bytearray(b"\x00" * 16))
-    m = dfs_iv(r, ref, 1, bytearray(b"\x00" * 16))
+    assert (m := dfs_iv(r, ref, 1, bytearray(b"\x00" * 16)))
     l2 = long_to_bytes(
         (bytes_to_long(enc_flag_iv) * s) & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
     )
@@ -264,7 +264,8 @@ def main():
     rem = 0
 
     while cnt <= N:
-        ret = bytes_to_long(dfs_iv(r, enc, 1, bytearray(b"\x00" * 16)))
+        assert (ret := dfs_iv(r, enc, 1, bytearray(b"\x00" * 16)))
+        ret = bytes_to_long(ret)
         x = (ret - rem) % mod
         ans += x * cnt
         print(long_to_bytes(ans))

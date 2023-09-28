@@ -1,0 +1,1 @@
+FLAG = b"FLAG{pAdd1NG_0rAcL3_A77aCK}"

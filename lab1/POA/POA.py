@@ -2,8 +2,7 @@
 from Crypto.Cipher import AES
 import os
 
-# from secret import FLAG
-FLAG = b"FLAG{pAdd1NG_0rAcL3_A77aCK}"
+from secret import FLAG
 
 
 def pad(data, block_size):
