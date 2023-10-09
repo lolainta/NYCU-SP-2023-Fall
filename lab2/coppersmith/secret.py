@@ -1,1 +1,1 @@
-FLAG = b"FLAG{abc123}"
+FLAG = b"FLAG{RandomPaddingIsImportant}"
