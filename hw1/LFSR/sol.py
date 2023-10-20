@@ -68,8 +68,6 @@ def main():
         for i in range(64)
     ]
     eqs = genmat(base, 256, 256 + 64)
-    for i in range(64):
-        print(eqs[i], hint[256+i])
     key = solve(eqs, hint[256 : 256 + 64])
     stream = resolve(base, key)
     flag = long_to_bytes(

@@ -2,6 +2,7 @@ from secret import FLAG
 from Crypto.Util.number import bytes_to_long
 from os import urandom
 
+
 class LFSR:
     def __init__(self, tap, state):
         self._tap = tap
@@ -13,10 +14,12 @@ class LFSR:
         self._state = self._state[1:] + [f]
         return x
 
-flag = list(map(int, ''.join(["{:08b}".format(c) for c in FLAG])))
-key =  list(map(int, ''.join(["{:08b}".format(c) for c in urandom(8)])))
+
+flag = list(map(int, "".join(["{:08b}".format(c) for c in FLAG])))
+key = list(map(int, "".join(["{:08b}".format(c) for c in urandom(8)])))
 taps = [0, 2, 17, 19, 23, 37, 41, 53]
 randomness = LFSR(taps, key)
+
 
 output = []
 for _ in range(len(flag) + 70):
