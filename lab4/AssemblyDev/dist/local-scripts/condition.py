@@ -3,7 +3,7 @@ from module.checker import *
 from module.math import *
 from sys import argv
 
-challenge_info = f'''
+challenge_info = f"""
 let a = MEM[RSP+0x0:RSP+0x4]
 let b = MEM[RSP+0x4:RSP+0x8]
 let c = MEM[RSP+0x8:RSP+0xc]
@@ -25,7 +25,7 @@ if c is an odd number:
     ECX = c // 8
 else:
     ECX = c * 4
-'''
+"""
 
 a = get_rand(4)
 b = get_rand(4)
@@ -37,7 +37,7 @@ init_list = [
     (RSP_DEFAULT + 0x0, a, 4),
     (RSP_DEFAULT + 0x4, b, 4),
     (RSP_DEFAULT + 0x8, c, 4),
-    (RSP_DEFAULT + 0xc, d, 4),
+    (RSP_DEFAULT + 0xC, d, 4),
 ]
 
 a = u2signed(a, 4)
@@ -58,6 +58,5 @@ if __name__ == "__main__":
         print(challenge_info)
         exit(0)
 
-    code = open(argv[1], 'r').read()
+    code = open(argv[1], "r").read()
     Checker(init_list, ans_list, code)
-

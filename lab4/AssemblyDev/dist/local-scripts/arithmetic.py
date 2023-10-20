@@ -3,7 +3,7 @@ from module.checker import *
 from module.math import *
 from sys import argv
 
-challenge_info = f'''
+challenge_info = f"""
 let a = MEM[RSP+0x0:RSP+0x4]
 let b = MEM[RSP+0x4:RSP+0x8]
 let c = MEM[RSP+0x8:RSP+0xc]
@@ -12,7 +12,7 @@ EAX = a + b
 EBX = a - b
 ECX = -c
 EDX = 9*a + 7
-'''
+"""
 
 a = get_rand(4)
 b = get_rand(4)
@@ -36,5 +36,5 @@ if __name__ == "__main__":
         print(challenge_info)
         exit(0)
 
-    code = open(argv[1], 'r').read()
+    code = open(argv[1], "r").read()
     Checker(init_list, ans_list, code)

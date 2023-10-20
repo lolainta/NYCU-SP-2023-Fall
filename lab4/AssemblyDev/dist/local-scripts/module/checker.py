@@ -13,16 +13,15 @@ DEFAULT_SIZE = 8  # qword
 
 
 class C:
-    RED = '\033[38;5;1m'
-    GREEN = '\033[38;5;2m'
-    YELLOW = '\033[38;5;3m'
-    BLUE = '\033[38;5;4m'
-    NC = '\033[0m'
+    RED = "\033[38;5;1m"
+    GREEN = "\033[38;5;2m"
+    YELLOW = "\033[38;5;3m"
+    BLUE = "\033[38;5;4m"
+    NC = "\033[0m"
 
 
 class Checker:
     def __init__(self, init_list, ans_list, code) -> None:
-
         # Assemble
         self.CODE = self._asm(code)
 
@@ -94,13 +93,13 @@ class Checker:
     def _get_data(self, expr, size=DEFAULT_SIZE):
         if self._is_number(expr):  # get 8 bytes from memory
             temp = self.mu.mem_read(expr, size)
-            return int.from_bytes(temp, 'little')
+            return int.from_bytes(temp, "little")
         else:  # register
             return self.mu.reg_read(eval("UC_X86_REG_{}".format(expr.upper())))
 
     def _set_data(self, expr, val, size=DEFAULT_SIZE):
         if self._is_number(expr):  # set `size` bytes to memory
-            self.mu.mem_write(expr, int.to_bytes(val, size, 'little'))
+            self.mu.mem_write(expr, int.to_bytes(val, size, "little"))
         else:  # register
             self.mu.reg_write(eval("UC_X86_REG_{}".format(expr.upper())), val)
 
@@ -121,13 +120,13 @@ class Checker:
             print(f"{C.RED}$%-3s{C.NC}: 0x%016x" % (reg, self._get_data(reg)))
 
         # memory
-        '''
+        """
         self._show_header("memory")
         for i in range(4):
             addr = DATA_ADDRESS + DEFAULT_SIZE * i
             val = self._get_data(addr)
             print(f"{C.BLUE}0x%07x{C.NC}|+0x%04x: 0x%016x" % (addr, DEFAULT_SIZE * i, val))
-        '''
+        """
 
         # stack
         self._show_header("stack")
@@ -135,8 +134,11 @@ class Checker:
         for i in range(8):
             addr = stack_top_addr + DEFAULT_SIZE * i
             val = self._get_data(addr)
-            print(f"{C.BLUE}0x%07x{C.NC}|+0x%04x: 0x%016x" %
-                  (addr, DEFAULT_SIZE * i, val), f"{C.BLUE}    ← $rsp{C.NC}" if i == 0 else "")
+            print(
+                f"{C.BLUE}0x%07x{C.NC}|+0x%04x: 0x%016x"
+                % (addr, DEFAULT_SIZE * i, val),
+                f"{C.BLUE}    ← $rsp{C.NC}" if i == 0 else "",
+            )
 
     def _show_header(self, title: str):
         print(f"\n──── {C.YELLOW}{title}{C.NC} ".ljust(80, "─"))
