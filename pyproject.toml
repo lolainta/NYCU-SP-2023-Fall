@@ -6,9 +6,13 @@ authors = ["LolaInTa Chi <lolainta@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 pwntools = "^4.11.0"
 pycryptodome = "^3.19.0"
+sage = "^0.0.0"
+ecdsa = "^0.18.0"
+tqdm = "^4.66.1"
+numpy = "^1.26.1"
 
 
 [build-system]
