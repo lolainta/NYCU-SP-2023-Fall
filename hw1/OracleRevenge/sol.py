@@ -268,13 +268,12 @@ def main():
         ret = bytes_to_long(ret)
         x = (ret - rem) % mod
         ans += x * cnt
-        print(long_to_bytes(ans))
+        # print(long_to_bytes(ans))
 
         enc = (enc * mod_inv_e) % N
         rem = (rem + x) * mod_inv % N
         cnt *= mod
-
-    print(ans)
+    # print(ans)
     print(long_to_bytes(ans))
 
 

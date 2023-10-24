@@ -105,7 +105,7 @@ def test3():
             r,
             encrypted_key,
             encrypted_iv,
-            open("encrypted_flag_d6fbfd5306695c4a.not_png", "rb").read(),
+            open("encrypted_flag.not_png", "rb").read(),
         )
     )
 
@@ -173,7 +173,7 @@ def main():
     print(f"{iv = }")
     cipher = AES.new(aes_key, AES.MODE_CBC, iv)
     pt = cipher.decrypt(
-        open("encrypted_flag_d6fbfd5306695c4a.not_png", "rb").read(),
+        open("encrypted_flag.not_png", "rb").read(),
     )
     open("flag.png", "wb").write(pt)
 

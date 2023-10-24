@@ -45,15 +45,10 @@ def check(s1, s2, r1, r2, h1, h2, n, m1, m2):
         * pow((r1 * pow(s1, -_sage_const_1 , n) - r2 * pow(s2, -_sage_const_1 , n)), -_sage_const_1 , n)
     ) % n
     if d1 == d2:
-        print(long_to_bytes(d1))
-        return True
-    return False
-
-
-def test(m1, m2):
-    if m1 < _sage_const_0  or m2 < _sage_const_0 :
-        return False
-    return True
+        fid = long_to_bytes(d1).find(b"FLAG")
+        if fid != -_sage_const_1 :
+            print(long_to_bytes(d1)[fid:])
+            exit()
 
 
 def main():
@@ -62,23 +57,17 @@ def main():
 
     l = lat(s1, s2, r1, r2, h1, h2, od)
     print(l)
-    cnt = _sage_const_0 
-    for i in range(_sage_const_3 ):
-        for j in range(_sage_const_3 ):
-            for k in range(_sage_const_3 ):
+
+    drift = _sage_const_3 
+    for i in range(-drift, drift + _sage_const_1 ):
+        for j in range(-drift, drift + _sage_const_1 ):
+            for k in range(-drift, drift + _sage_const_1 ):
                 cur = i * l[_sage_const_0 ] + j * l[_sage_const_1 ] + k * l[_sage_const_2 ]
                 m1 = -cur[_sage_const_0 ]
                 m2 = cur[_sage_const_1 ]
                 if m1 < _sage_const_0  or m2 < _sage_const_0 :
                     continue
-                if check(s1, s2, r1, r2, h1, h2, od, m1, m2):
-                    if test(m1, m2):
-                        print("AC")
-                    else:
-                        print("WA")
-                    cnt += _sage_const_1 
-    print(cnt)
-    print(od)
+                check(s1, s2, r1, r2, h1, h2, od, m1, m2)
 
 
 if __name__ == "__main__":

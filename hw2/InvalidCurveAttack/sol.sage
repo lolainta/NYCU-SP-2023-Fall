@@ -3,8 +3,10 @@ from pwn import remote
 from Crypto.Util.number import isPrime, long_to_bytes
 from elliptic_curve import Curve, Point
 from random import randint
-from tqdm import trange
+from tqdm import tqdm
 from data import p, a, b, n
+
+
 # nc 10.113.184.121 10034.
 def send_point(p):
     r = remote("10.113.184.121", "10034", level="error")
@@ -14,7 +16,7 @@ def send_point(p):
     r.recvuntil(b"Gy: ")
     r.sendline(str(p[1]).encode())
     ret = r.recvline()
-    if b'Traceback' in ret:
+    if b"Traceback" in ret:
         # r.interactive()
         r.close()
         return None
@@ -23,7 +25,8 @@ def send_point(p):
         x = int(ret[1 : ret.find(b",")])
         y = int(ret[ret.find(b",") + 2 : -2])
     except:
-        print(ret)
+        if ret != b"INF\n":
+            print(ret)
         return None
     r.close()
     # print(f"{x = } {y = }")
@@ -65,10 +68,11 @@ def phi(x, y):
     v = y - t * x
     return u / v
 
+
 def attack(Gx, Gy, Px, Py):
     x = GF(p)["x"].gen()
     print(f"{x = }")
-    f = x ** 3 - 3  * x + 2
+    f = x**3 - 3 * x + 2
     roots = f.roots()
     print(f"{roots = }")
 
@@ -97,7 +101,8 @@ def attack(Gx, Gy, Px, Py):
         return discrete_log(v, u)
     raise ValueError(f"Unexpected number of roots {len(roots)}.")
 
-def main():
+
+def test():
     while True:
         # y^2 = x^3 - 3 * x + 2
         # y^2 = (x - 1)^2 * (x + 2)
@@ -127,12 +132,12 @@ def main():
         print(f"{factor(G1.order()-1) = }")
         print(f"{factor(G1.order()-1)[-1][0].bit_length() = }")
         return
-        G1 = E1(F(gx),F(gy))
+        G1 = E1(F(gx), F(gy))
         # print(f"{G1 = }")
         order1 = G1.order()
         print(order1.factor())
         print(f"{order1.factor()[-1][0].bit_length() = }")
-        ret  = send_point(G1)
+        ret = send_point(G1)
         if ret is None:
             continue
         hx, hy = ret
@@ -154,7 +159,8 @@ def main():
         # print(f"{d = }")
         # break
 
-def test(bb):
+
+def test2(bb):
     # bb = 5
     F = Zmod(p)
     E = EllipticCurve(F, [a, bb])
@@ -170,11 +176,11 @@ def test(bb):
 
     val, mod = [], []
     for f, e in fac:
-        order = f ** e
+        order = f**e
         if order.bit_length() > 40:
             print(f"{order = } {order.bit_length() = } too long")
             continue
-        base = (n // order)
+        base = n // order
         final = base * P
         gx, gy = final.x, final.y
         ret = send_point([gx, gy])
@@ -193,43 +199,61 @@ def test(bb):
         #     cur += final
         # else:
         #     raise ValueError("Not found.")
-        t = discrete_log(E(F(hx),F(hy)), E(F(gx),F(gy)), ord = order, operation = '+')
+        t = discrete_log(E(F(hx), F(hy)), E(F(gx), F(gy)), ord=order, operation="+")
         print(f"{base = } {order = } {order.bit_length() = } {t = }")
         val.append(t)
         mod.append(order)
-    print(val,mod)
+    print(val, mod)
     flag = crt(val, mod)
     print(f"{flag = }")
     print(long_to_bytes(flag))
     return val, mod
 
-if __name__ == "__main__":
-    vals, mods = [0], [125]
-    
-    for i in range(3,20):
-        v, m = test(i)
-        vals.extend(v)
-        mods.extend(m)
-    print(vals, mods)
+
+def get_hint(bb, vals, mods):
+    # tqdm.write(f"{bb = }")
+    F = Zmod(p)
+    E = EllipticCurve(F, [a, bb])
+    G = E.gens()[0]
+    n = G.order()
+    fac = G.order().factor()
+    # tqdm.write(f"{fac = }")
+    C = Curve(p, a, bb)
+    P = Point(C, G[0], G[1])
+    for f, e in fac:
+        order = f**e
+        if order.bit_length() > 45:
+            # tqdm.write(f"{order=} {order.bit_length()=} too long")
+            continue
+        base = n // order
+        final = base * P
+        gx, gy = final.x, final.y
+        ret = send_point([gx, gy])
+        if ret is None:
+            continue
+        hx, hy = ret
+        t = discrete_log(E(F(hx), F(hy)), E(F(gx), F(gy)), ord=order, operation="+")
+        # tqdm.write(f"{base=} {order=} {order.bit_length()=} {t=}")
+        if t not in vals:
+            vals.append(t)
+            mods.append(order)
     flag = crt(vals, mods)
-    print(f"{flag = }")
-    print(long_to_bytes(flag))
-    exit()
-    P.<x> = GF(p)[]
-    f = x^3 + -3*x + 2
-    f_ = f.subs(x=x + 1)
-    t = GF(p)(3).square_root()
-    print(f_.factor())
-    print(t)
-    exit()
-    P = (1451, 1362)
-    Q = (3141, 12767)
-    # change variables to have the singularity at (0, 0)
-    P_ = (P[0] - 1, P[1])
-    Q_ = (Q[0] - 1, Q[1])
-    # show that the curve is of the form y^2 = x^3 + x^2
-    # map both points to F_p
-    u = (P_[1] + t*P_[0])/(P_[1] - t*P_[0]) % p
-    v = (Q_[1] + t*Q_[0])/(Q_[1] - t*Q_[0]) % p
-    # use Sage to solve the logarithm
-    print(discrete_log(v, u))
+    # tqdm.write(f"{vals = }")
+    # tqdm.write(f"{mods = }")
+    # tqdm.write(f"{flag = }")
+    # tqdm.write(str(long_to_bytes(flag)))
+    if long_to_bytes(flag).startswith(b"FLAG"):
+        tqdm.write(str(long_to_bytes(flag)))
+        return True
+    return False
+
+
+def main():
+    vals, mods = [125], [256]
+    while True:
+        if get_hint(randint(10, p), vals, mods):
+            break
+
+
+if __name__ == "__main__":
+    main()
