@@ -41,10 +41,10 @@ def inv(x, n):
 
 def solve(r1, s1, h1, r2, s2, h2):
     # k1 = s1^-1 * (h1 + d * r1) mod n
-    # 1337 * k2 = s2^-1 * (h2 + d * r2) mod n
+    # 1337 * k1 = s2^-1 * (h2 + d * r2) mod n
 
     # 1337 * k1 = 1337 * s1^-1 * (h1 + d * r1) mod n
-    # 1337 * k2 = s2^-1 * (h2 + d * r2) mod n
+    # 1337 * k1 = s2^-1 * (h2 + d * r2) mod n
 
     # 1337 * s1^-1 * (h1 + d * r1) = s2^-1 * (h2 + d * r2) mod n
     # 1337 * s1^-1 * (h1 + d * r1) - s2^-1 * (h2 + d * r2) = 0 mod n
@@ -52,9 +52,12 @@ def solve(r1, s1, h1, r2, s2, h2):
     # 1337 * s1^-1 * h1 + 1337 * s1^-1 * d * r1 - s2^-1 * h2 - s2^-1 * d * r2 = 0 mod n
     # 1337 * s1^-1 * d * r1 - s2^-1 * d * r2 = s2^-1 * h2 - 1337 * s1^-1 * h1
     # d = (s2^-1 * h2 - 1337 * s1^-1 * h1) / (1337 * s1^-1 * r1 - s2^-1 * r2) mod n
-    numer = inv(s2, n) * h2 - 1337 * inv(s1, n) * h1
-    denom = 1337 * inv(s1, n) * r1 - inv(s2, n) * r2
-    return numer * inv(denom, n) % n
+
+    # numer = inv(s2, n) * h2 - 1337 * inv(s1, n) * h1
+    # denom = 1337 * inv(s1, n) * r1 - inv(s2, n) * r2
+    numer = h2 * s1 - 1337 * h1 * s2
+    denom = 1337 * r1 * s2 - r2 * s1
+    return numer * pow(denom, -1, n)
 
 
 def main():

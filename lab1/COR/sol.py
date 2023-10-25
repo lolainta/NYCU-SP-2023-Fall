@@ -38,15 +38,15 @@ def correlation_attack(stream, key_len):
             s = [lfsr.getbit() for _ in range(200)]
             matches = sum(a == b for a, b in zip(stream, s))
             if matches >= 140:
-                print(key_candidate)
+                # print(key_candidate)
                 return key_candidate
 
 
-# key2 = correlation_attack(hint, 23)
-# key3 = correlation_attack(hint, 27)
+key2 = correlation_attack(hint, 23)
+key3 = correlation_attack(hint, 27)
 
-key2 = [1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1]
-key3 = [0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1]
+# key2 = [1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1]
+# key3 = [0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1]
 
 lfsr2 = LFSR([0, 1, 2, 5], key2)
 lfsr3 = LFSR([0, 1, 2, 5], key3)
@@ -66,12 +66,12 @@ def bf():
                 # print("fail", key_candidate)
                 break
         if suc:
-            print(key_candidate)
+            # print(key_candidate)
             return key_candidate
 
 
-# key1 = bf()
-key1 = [0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0]
+key1 = bf()
+# key1 = [0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0]
 lfsr1 = LFSR([0, 1, 2, 5], key1)
 lfsr1_stream = [lfsr1.getbit() for _ in range(200)]
 cipher = triLFSR(lfsr1, lfsr2, lfsr3)

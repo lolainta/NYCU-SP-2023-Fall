@@ -1,7 +1,8 @@
 from Crypto.Util.number import bytes_to_long, long_to_bytes
 from pwn import remote, process
 from Crypto.Cipher import AES
-from math import lcm
+from math import lcm, log, ceil
+from tqdm import tqdm
 
 
 def pad(m):
@@ -263,16 +264,18 @@ def main():
     cnt = 1
     rem = 0
 
-    while cnt <= N:
-        assert (ret := dfs_iv(r, enc, 1, bytearray(b"\x00" * 16)))
-        ret = bytes_to_long(ret)
-        x = (ret - rem) % mod
-        ans += x * cnt
-        # print(long_to_bytes(ans))
+    with tqdm(total=ceil(log(N, mod))) as pbar:
+        while cnt <= N:
+            assert (ret := dfs_iv(r, enc, 1, bytearray(b"\x00" * 16)))
+            ret = bytes_to_long(ret)
+            x = (ret - rem) % mod
+            ans += x * cnt
+            # print(long_to_bytes(ans))
 
-        enc = (enc * mod_inv_e) % N
-        rem = (rem + x) * mod_inv % N
-        cnt *= mod
+            enc = (enc * mod_inv_e) % N
+            rem = (rem + x) * mod_inv % N
+            cnt *= mod
+            pbar.update(1)
     # print(ans)
     print(long_to_bytes(ans))
 

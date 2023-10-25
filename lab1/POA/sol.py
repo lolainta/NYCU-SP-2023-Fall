@@ -51,4 +51,4 @@ pt = b"".join(
         for i in range(N)
     ]
 )
-print(pt)
+print(pt[: pt.index(b"}") + 1].decode())
