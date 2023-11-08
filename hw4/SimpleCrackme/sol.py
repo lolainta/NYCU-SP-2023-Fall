@@ -22,14 +22,12 @@ s2 = [
 
 src = np.array(src).reshape(7, 7)
 s2 = np.array(s2).reshape(7, 7)
-print(src.shape)
-print(s2.shape)
 
 ans = np.linalg.solve(src, s2)
 ans += 1e-4
 ans = ans.astype(int)
 
-print(ans)
+print(ans.size)
 
 print(*ans.flatten())
 
