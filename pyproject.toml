@@ -14,7 +14,8 @@ ecdsa = "^0.18.0"
 tqdm = "^4.66.1"
 numpy = "^1.26.1"
 z3 = "^0.2.0"
-z3-solver = "^4.12.2.0"
+claripy = "^9.2.78"
+angr = "^9.2.78"
 
 
 [build-system]
