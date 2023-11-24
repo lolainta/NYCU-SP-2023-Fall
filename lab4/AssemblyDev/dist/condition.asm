@@ -12,10 +12,10 @@ jb PB
 mov ebx, edx
 PB:
 mov edx, ecx
-and edx, 0x1
-jnz PC
-imul ecx, 4
-jmp final
+test edx, 0x1
+jnz odd
+shl ecx, 0x02
+jmp PC
+odd:
+shr ecx, 0x3
 PC:
-sar ecx, 0x3
-final:
