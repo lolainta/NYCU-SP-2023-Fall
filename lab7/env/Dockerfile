@@ -39,12 +39,11 @@ RUN useradd --uid 1000 --gid 1000 --groups root,sudo,adm,users --create-home --p
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER llt
+WORKDIR /home/llt
 RUN bash -c "$(curl -fsSL http://gef.blah.cat/sh)"
-RUN git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb
-RUN cp ~/Pwngdb/.gdbinit ~/
+# RUN git clone https://github.com/pwndbg/pwndbg.git
+# RUN cd pwndbg && ./setup.sh
 
-USER root
-WORKDIR /home
 # run the service
 ENTRYPOINT ["sleep", "infinity"]
 

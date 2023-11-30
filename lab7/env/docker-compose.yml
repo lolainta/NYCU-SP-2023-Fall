@@ -8,9 +8,9 @@ services:
     environment:
       - EDITOR=vim
     volumes:
-      - ../StackOverflow:/home/StackOverflow
-      - ../ShellCode:/home/ShellCode
-      - ../GOT:/home/GOT
+      - ../StackOverflow:/home/llt/StackOverflow
+      - ../ShellCode:/home/llt/ShellCode
+      - ../GOT:/home/llt/GOT
     networks:
         default:
 

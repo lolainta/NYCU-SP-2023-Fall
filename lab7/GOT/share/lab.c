@@ -1,8 +1,9 @@
-#include<stdio.h>
-#include<sys/mman.h>
-#include<unistd.h>
+#include <stdio.h>
+#include <sys/mman.h>
+#include <unistd.h>
 unsigned long long arr[1] = {1234};
-int main(){
+int main()
+{
     setvbuf(stdin, 0, _IONBF, 0);
     setvbuf(stdout, 0, _IONBF, 0);
     int index;
@@ -12,5 +13,5 @@ int main(){
     printf("val: ");
     scanf("%lu", &arr[index]);
     printf("/bin/sh");
-	return 0;
+    return 0;
 }

