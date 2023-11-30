@@ -9,7 +9,7 @@ RUN apt-get install -y openssh-server sudo vim grep gawk rsync tmux diffutils fi
 RUN apt-get install -y gcc gdb make yasm nasm tcpdump python3 python3-pip python3-virtualenv
 RUN apt-get install -y gcc-multilib g++-multilib
 RUN apt-get install -y libc6-dbg dpkg-dev
-RUN apt-get install -y curl git zsh
+RUN apt-get install -y curl git fish
 RUN apt-get install -y ruby-dev wget
 RUN pip3 install pwntools capstone filebytes keystone-engine ropper
 RUN gem install seccomp-tools
@@ -28,24 +28,23 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 RUN /usr/sbin/locale-gen
 
 # gen ssh-keys, allow empty password
-#RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
-#RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
-#RUN echo 'PermitEmptyPasswords yes' >> /etc/ssh/sshd_config
-RUN sed -i 's/nullok_secure/nullok/' /etc/pam.d/common-auth
+# RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+# RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
+# RUN echo 'PermitEmptyPasswords yes' >> /etc/ssh/sshd_config
+# RUN sed -i 's/nullok_secure/nullok/' /etc/pam.d/common-auth
 
 # add user/group, empty password, allow sudo
-RUN groupadd -g 1000 lys0829
-RUN useradd --uid 1000 --gid 1000 --groups root,sudo,adm,users --create-home --password '' --shell /bin/bash lys0829
+RUN groupadd -g 1000 llt
+RUN useradd --uid 1000 --gid 1000 --groups root,sudo,adm,users --create-home --password '' --shell /usr/bin/fish llt
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-USER lys0829
+USER llt
 RUN bash -c "$(curl -fsSL http://gef.blah.cat/sh)"
 RUN git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb
 RUN cp ~/Pwngdb/.gdbinit ~/
 
 USER root
+WORKDIR /home
 # run the service
-EXPOSE 22
-ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["/usr/sbin/sshd", "-D"]
+ENTRYPOINT ["sleep", "infinity"]
 

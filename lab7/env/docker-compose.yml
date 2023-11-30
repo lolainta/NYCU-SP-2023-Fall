@@ -5,12 +5,10 @@ services:
     build: .
     restart: unless-stopped
     privileged: true
-    ports:
-      - "22224:22"
     environment:
       - EDITOR=vim
     volumes:
-      - ./share:/home
+      - ../StackOverflow:/home/StackOverflow
     networks:
         default:
 
