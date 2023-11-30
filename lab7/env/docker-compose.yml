@@ -9,6 +9,7 @@ services:
       - EDITOR=vim
     volumes:
       - ../StackOverflow:/home/StackOverflow
+      - ../ShellCode:/home/ShellCode
     networks:
         default:
 
