@@ -10,6 +10,7 @@ services:
     volumes:
       - ../StackOverflow:/home/StackOverflow
       - ../ShellCode:/home/ShellCode
+      - ../GOT:/home/GOT
     networks:
         default:
 
