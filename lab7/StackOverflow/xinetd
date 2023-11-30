@@ -1,0 +1,15 @@
+service lab
+{
+        disable = no
+        type = UNLISTED
+        wait = no
+        server = /home/lab/run.sh
+        socket_type = stream
+        protocol = tcp
+        user = lab
+        port = 10101
+        flags = REUSE
+        per_source = 3
+        rlimit_cpu = 3
+        nice = 18
+}

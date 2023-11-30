@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  lab_stackoverflow:
+    build: ./
+    volumes:
+      - ./share:/home/lab:ro
+      - ./xinetd:/etc/xinetd.d/lab:ro
+    ports:
+      - "10101:10101"
