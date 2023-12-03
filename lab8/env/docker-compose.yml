@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  main:
+    build: .
+    restart: unless-stopped
+    privileged: true
+    environment:
+      - EDITOR=vim
+    volumes:
+      - ../rop_rw:/home/llt/rop_rw
+    networks:
+        default:
+
+networks:
+    default:
+

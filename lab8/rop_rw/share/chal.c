@@ -30,7 +30,7 @@ int main(void)
 	setvbuf(stdout, 0, _IONBF, 0);
 	int fd = 0;
 	char buf[0x10];
-	fd = open("/home/chal/flag.txt", O_RDONLY);
+	fd = open("/home/llt/rop_rw/share/flag.txt", O_RDONLY);
 	read(fd, flag, 0x10);
 	close(fd);
 
