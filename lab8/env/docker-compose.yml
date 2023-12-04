@@ -9,6 +9,7 @@ services:
       - EDITOR=vim
     volumes:
       - ../rop_rw:/home/llt/rop_rw
+      - ../rop_syscall:/home/llt/rop_syscall
     networks:
         default:
 
