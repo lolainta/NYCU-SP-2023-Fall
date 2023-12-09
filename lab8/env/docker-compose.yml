@@ -11,6 +11,7 @@ services:
       - ../rop_rw:/home/llt/rop_rw
       - ../rop_syscall:/home/llt/rop_syscall
       - ../ret2plt:/home/llt/ret2plt
+      - ../stack_pivot:/home/llt/stack_pivot
     networks:
         default:
 
