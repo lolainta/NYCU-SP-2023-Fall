@@ -69,12 +69,10 @@ def main(r):
 
 
 if __name__ == "__main__":
-    while True:
-        try:
-            r = remote("10.113.184.121", 10051)
-            main(r)
-        except Exception as e:
-            log.warning(f"{type(e).__name__}: {e}")
-        finally:
-            r.close()
-        input()
+    try:
+        r = remote("10.113.184.121", 10051)
+        main(r)
+    except Exception as e:
+        log.warning(f"{type(e).__name__}: {e}")
+    finally:
+        r.close()

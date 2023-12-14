@@ -2,6 +2,7 @@
 FROM ubuntu:20.04
 
 # install packages
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN yes | unminimize
 RUN apt-get install -y iproute2 iputils-ping net-tools netcat

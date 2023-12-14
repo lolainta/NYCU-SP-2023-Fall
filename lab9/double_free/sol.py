@@ -80,7 +80,7 @@ def main():
     flag += sol(0x40)
     flag += sol(0x38)
     flag += sol(0x30)
-    print(flag)
+    print(flag.decode().strip())
 
 
 if __name__ == "__main__":
