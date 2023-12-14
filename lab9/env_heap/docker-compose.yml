@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  main:
+    build: .
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - "22224:22"
+    environment:
+      - EDITOR=vim
+    volumes:
+      - ../uaf:/home/llt/uaf
+      - ../double_free:/home/llt/double_free
+    networks:
+        default:
+
+networks:
+    default:
+
