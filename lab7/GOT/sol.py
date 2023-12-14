@@ -1,6 +1,7 @@
 from pwn import *
 
-glibc = ELF("/lib/x86_64-linux-gnu/libc.so.6")
+# glibc = ELF("/lib/x86_64-linux-gnu/libc.so.6")
+glibc = ELF("./libc.so.6")
 
 idx = -(0x4048 - 0x4020) // 8
 assert idx == -5
