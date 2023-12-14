@@ -1,1 +1,1 @@
-flag{fake}
+flag{__libc_csu_init_1s_P0w3RFu1l!!}

