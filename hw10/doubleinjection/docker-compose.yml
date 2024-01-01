@@ -1,0 +1,8 @@
+version: '3.5'
+
+services:
+  app:
+    build: ./
+    restart: always
+    ports:
+      - "3000:3000"
