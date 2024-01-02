@@ -21,14 +21,21 @@ app.get('/', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
+    console.log();
+    console.log(req.body)
+    console.log(typeof(username), username);
+    console.log(typeof(password), password);
     const jsonPath = JSON.stringify(`$.${username}.password`);
     const query = `SELECT json_extract(users, ${jsonPath}) AS password FROM db`;
     console.log(query);
     const template = `
-    <html><head><title>Success</title></head><body>
-    <h1>Success!</h1>
-    <p>Logged in as ${username}</p>
-    </body></html>
+    <html>
+        <head><title>Success</title></head>
+        <body>
+            <h1>Success!</h1>
+            <p>Logged in as ${username}</p>
+        </body>
+    </html>
     `
     db.get(query, (err, row) => {
         if (res.headersSent) return;
