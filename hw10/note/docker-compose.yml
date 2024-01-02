@@ -1,0 +1,20 @@
+version: "3.5"
+
+x-share-env: &share-env
+  ADMIN_PASSWORD: ztLsRe2dX8praTtf5L1FBSY5VuSSXy0Edb01q3AQVgs
+  SECRET_KEY: jR8swB-gpkgILCG2HCMkz1LVWG0Jlj7ANaaRW4ohSZI
+
+services:
+  web:
+    depends_on:
+      - xss-bot
+    build: ./app
+    ports:
+      - 10082:5000/tcp
+    environment:
+      <<: *share-env
+  
+  xss-bot:
+    build: ./bot
+    environment:
+      <<: *share-env

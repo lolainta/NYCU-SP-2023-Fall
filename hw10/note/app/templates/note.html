@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 0 20vw;
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+        }
+
+        hr {
+            margin: 20px 0;
+            /* color */
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #note {
+            border: 1px solid #ccc;
+            margin: auto 0;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="note"></div>
+    <script src="https://unpkg.com/marked@11.1.0/marked.min.js"></script>
+    <script src="/static/note.js"></script>
+</body>
+
+</html>
