@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input {
+            margin: 10px;
+            padding: 10px;
+            width: 200px;
+        }
+
+        hr {
+            width: 100%;
+        }
+
+        .message {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    {% for message in get_flashed_messages() %}
+    <div class="message">{{ message }}</div>
+    {% endfor %}
+
+    <h1>Login & Register</h1>
+    <form action="/login" method="post" id="login-form">
+        <input type="text" name="username" placeholder="username">
+        <input type="password" name="password" placeholder="password">
+        <input type="submit" value="login">
+    </form>
+
+</body>
+
+</html>
