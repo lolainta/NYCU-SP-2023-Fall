@@ -1,4 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    jsonify,
+    session,
+)
 from uuid import uuid4
 from functools import wraps
 from secrets import token_urlsafe
@@ -6,14 +15,16 @@ import os
 import re
 import sqlite3
 import urllib.request
-
+import sys
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", 'super secret key')
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "super secret key")
+print(app.config["SECRET_KEY"])
 
 from rq import Queue
 from redis import Redis
-app.queue = Queue(connection=Redis('xss-bot'))
+
+app.queue = Queue(connection=Redis("xss-bot"))
 
 NOTES_DIR = "notes"
 
@@ -34,8 +45,11 @@ def login_required(f):
 @app.after_request
 def add_header(response):
     # add content security policy header
-    response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'unsafe-inline'; script-src 'self' https://unpkg.com/"
+    response.headers[
+        "Content-Security-Policy"
+    ] = "default-src 'self'; style-src 'unsafe-inline'; script-src 'self' https://unpkg.com/"
     return response
+
 
 @app.get("/")
 @login_required
@@ -56,18 +70,20 @@ def action_login():
     if len(username) < 5 or len(password) < 5:
         flash("Username or password too short!", "error")
         return redirect(url_for("login"))
-    
+
     if not re.match(r"^[a-zA-Z0-9_]+$", username):
         flash(
             "Username must only contain alphanumeric characters and underscores!",
-            "error"
+            "error",
         )
         return redirect(url_for("login"))
 
     if username in users and users[username] == password:
         session["username"] = username
         return redirect(url_for("index"))
-    elif username not in users and not os.path.exists(os.path.join(NOTES_DIR, username)):
+    elif username not in users and not os.path.exists(
+        os.path.join(NOTES_DIR, username)
+    ):
         users[username] = password
         os.mkdir(os.path.join(NOTES_DIR, username))
         flash("Successfully registered!", "success")
@@ -75,6 +91,7 @@ def action_login():
     else:
         flash("Invalid username or password!", "error")
         return redirect(url_for("login"))
+
 
 @app.get("/note")
 def note():
@@ -88,11 +105,13 @@ def api_notes():
     user_dir = os.path.join(NOTES_DIR, session["username"])
     for filename in os.listdir(user_dir):
         with open(os.path.join(user_dir, filename)) as f:
-            notes.append({
-                "id": filename,
-                "author": f.readline().strip(),
-                "title": f.readline().strip()
-            })
+            notes.append(
+                {
+                    "id": filename,
+                    "author": f.readline().strip(),
+                    "title": f.readline().strip(),
+                }
+            )
     return jsonify(notes)
 
 
@@ -104,7 +123,7 @@ def api_create_note():
     user_dir = os.path.join(NOTES_DIR, session["username"])
     note_id = str(uuid4())
     title, content = request.json["title"], request.json["content"]
-    if len(title) > 48 or len(content) > 256:
+    if len(title) > 48 or len(content) > 340:
         return {"error": "Title or content too long!"}, 400
     with open(os.path.join(user_dir, note_id), "w") as f:
         f.write(session["username"] + "\n")
@@ -135,7 +154,7 @@ def api_get_note_content():
         title = f.readline().strip()
         content = f.read().strip()
 
-    if session['username'] != 'admin' and note_author != session["username"]:
+    if session["username"] != "admin" and note_author != session["username"]:
         return {"error": "You do not have permission to view this note!"}, 403
 
     return {"author": note_author, "title": title, "content": content}
@@ -145,8 +164,11 @@ def api_get_note_content():
 def report():
     note_id = request.form.get("note_id", "")  # uuid
     author = request.form.get("author", "")
+    print(note_id, author)
 
-    if not re.match(r"^[a-zA-Z0-9_]+$", author) or not re.match(r"^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$", note_id):
+    if not re.match(r"^[a-zA-Z0-9_]+$", author) or not re.match(
+        r"^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$", note_id
+    ):
         return "Invalid author or note ID!"
 
     if not os.path.exists(os.path.join(NOTES_DIR, author, note_id)):
