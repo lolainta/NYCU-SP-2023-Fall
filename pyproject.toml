@@ -16,6 +16,8 @@ numpy = "^1.26.1"
 z3 = "^0.2.0"
 claripy = "^9.2.78"
 angr = "^9.2.78"
+flask = "^3.0.0"
+rq = "^1.15.1"
 
 
 [build-system]
